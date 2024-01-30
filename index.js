@@ -4,12 +4,13 @@ const path = require("path");
 const app = express();
 const morgan = require("morgan");
 const ejsmate = require("ejs-mate");
-const Campground = require("./models/campground");
 const ExpressError = require("./utils/ExpressError");
 const catchAsync = require("./utils/catchasync");
 const joi = require("joi");
 const {campgroundSchema} = require("./schemas");
 const {getQuote} = require('./middlewares/RandomQuoteAPI');
+const Campground = require('./models/campground');
+const Review = require('./models/review');
 
 app.engine("ejs", ejsmate);
 app.set("view engine", "ejs");
@@ -114,6 +115,14 @@ app.post(
     res.redirect(`/campgrounds/${campground._id}`);
   })
 );
+app.post('/campgrounds/:id/reviews', async (req, res) => {
+  const campground = await Campground.findById(req.params.id);
+  const review = new Review(req.body);
+  campground.reviews.push(review);
+  await review.save();
+  await campground.save();
+  res.redirect(`/campgrounds/${campground._id}`);
+});
 
 app.post(
   "/campgrounds/:id/delete",
@@ -122,6 +131,7 @@ app.post(
     res.redirect("/campgrounds");
   })
 );
+
 
 app.use((err, req, res, next) => {
   if (err.name === "ValidationError") {
