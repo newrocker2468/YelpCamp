@@ -7,7 +7,7 @@ const ejsmate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError");
 const campgroundRoutes = require("./routes/campground");
 const catchAsync = require("./utils/catchasync");
-
+const cookieParser = require("cookie-parser");
 
 app.engine("ejs", ejsmate);
 app.set("view engine", "ejs");
@@ -16,10 +16,14 @@ app.set("views", path.join(__dirname, "/views"));
 // app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true }));
 app.use("/campgrounds",campgroundRoutes );
+app.use(cookieParser("Thisismysecret"));
 
 async function main() {
   await mongoose.connect("mongodb://127.0.0.1:27017/campground");
 }
+main()
+  .then(() => console.log("Connected"))
+  .catch((err) => console.log(err));
 
 
 app.get(
@@ -33,7 +37,24 @@ app.get(
     
   })
 );
+app.get("/greet", (req, res) => {
 
+  res.send(`Hello ${req.cookies.name} Nice pet u got there is it a ${req.cookies.animal} ?`);
+});
+app.get("/getsignedcookie", (req, res) => {
+  res.cookie("fruit", "grape", { signed: true });
+  res.send("OK SIGNED YOUR COOKIE");
+})
+app.get("/verifyfruit", (req, res) => {
+  console.log(req.cookies);
+  console.log(req.signedCookies);
+  res.send(req.signedCookies.fruit);
+});
+app.get("/setname", (req, res) => {
+  res.cookie("name", "Stevie Wonder");
+  res.cookie("animal", "harlequin shrimp");
+  res.send("OK SENT YOU A COOKIE");
+});
 
 // app.use((req, res, next) => {
 //   req.requestTime = Date.now();
@@ -41,9 +62,6 @@ app.get(
 // next();
 // });
 
-main()
-  .then(() => console.log("Connected"))
-  .catch((err) => console.log(err));
 
 // app.get("/", (req, res) => {
 //   console.log("RequestDate" + req.requestTime);
