@@ -6,4 +6,13 @@ const campgroundSchema = joi.object({
     price: joi.number().required().min(0),
     description: joi.string().required(),
   });
+
+
   module.exports.campgroundSchema = campgroundSchema;
+const reviewSchema = joi.object({
+
+      body: joi.string().required(),
+      rating: joi.number().required().min(1).max(5),
+
+  }) 
+  module.exports.reviewSchema =reviewSchema;
