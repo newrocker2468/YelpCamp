@@ -72,6 +72,17 @@ main()
 // })
 
 app.get(
+  "/",
+  catchAsync(async (req, res) => {
+    const campgrounds = await Campground.find({});
+    const r = await getQuote();
+   console.log(r);
+
+    res.render("campgrounds/index", { campgrounds,r});
+    
+  })
+);
+app.get(
   "/campgrounds",
   catchAsync(async (req, res) => {
     const campgrounds = await Campground.find({});
@@ -133,6 +144,13 @@ app.post('/campgrounds/:id/reviews', validateReview ,async (req, res) => {
   await campground.save();
   res.redirect(`/campgrounds/${campground._id}`);
 });
+
+app.post("/campgrounds/:id/reviews/:reviewId/delete", async (req, res) => {
+  const campground = await Campground.findByIdAndUpdate(req.params.id,{$pull:{reviews:req.params.reviewId}});
+  const review = await Review.findByIdAndDelete(req.params.reviewId);
+  res.redirect(`/campgrounds/${campground.id}`);
+})
+
 
 app.post(
   "/campgrounds/:id/delete",
