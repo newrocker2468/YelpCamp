@@ -30,7 +30,9 @@ const Review = require('../models/review');
     "/:id",
     catchAsync(async (req, res) => {
       const resultcampground = await Campground.findById(req.params.id).populate("reviews");
-      console.log(resultcampground);
+      if (!resultcampground) {
+        req.flash("error", "Campground Not Found!"); 
+        return res.redirect("/campgrounds");}
       res.render("campgrounds/show", { resultcampground});
     })
   );
@@ -52,6 +54,9 @@ const Review = require('../models/review');
     "/:id/edit",
     catchAsync(async (req, res) => {
       const campground = await Campground.findById(req.params.id);
+      if (!resultcampground) {
+        req.flash("error", "Campground Not Found!"); 
+        return res.redirect("/campgrounds");}
       res.render("campgrounds/edit", { campground });
     })
   );
@@ -63,21 +68,25 @@ const Review = require('../models/review');
         req.params.id,
         req.body
       );
+      req.flash("success", "Successfully Updated Campground!");
       res.redirect(`/campgrounds/${campground._id}`);
     })
   );
-  router.post('/:id/reviews', validateReview ,async (req, res) => {
+
+  router.post('/:id/reviews', validateReview ,catchAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id);
     const review = new Review(req.body);
     campground.reviews.push(review);
     await review.save();
     await campground.save();
+    req.flash("success", "Review Added Successfully!");
     res.redirect(`/campgrounds/${campground._id}`);
-  });
+  }));
   
   router.post("/:id/reviews/:reviewId/delete", async (req, res) => {
     const campground = await Campground.findByIdAndUpdate(req.params.id,{$pull:{reviews:req.params.reviewId}});
     const review = await Review.findByIdAndDelete(req.params.reviewId);
+    req.flash("success", "Review Deleted Successfully!");
     res.redirect(`/campgrounds/${campground.id}`);
   })
   
@@ -86,6 +95,7 @@ const Review = require('../models/review');
     "/:id/delete",
     catchAsync(async (req, res) => {
      await Campground.findByIdAndDelete(req.params.id);
+     req.flash("success", "Campground Deleted Successfully!");
       res.redirect("/campgrounds");
     })
   );
