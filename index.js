@@ -6,18 +6,38 @@ const morgan = require("morgan");
 const ejsmate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError");
 const campgroundRoutes = require("./routes/campground");
+const Campground = require('./models/campground');
 const catchAsync = require("./utils/catchasync");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
+const flash = require("connect-flash");
+const {getQuote} = require('./middlewares/RandomQuoteAPI');
 
 app.engine("ejs", ejsmate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/views"));
 
-app.use(session({secret:"thisisnotagoodsecret"}));
-app.get("/pageviews", (req, res) => {
-  res.send(`You viewed this page x times`);
-});
+app.use(express.static(path.join(__dirname, "public")));
+const sessionConfig = {
+
+  secret: "thisshouldbeabettersecret!",
+  resave: false,
+  saveUninitialized: true,
+  cookie:{
+    expires:Date.now()+1000*60*60*24*7,
+    maxAge:1000*60*60*24*7,
+    httpOnly:true
+  }
+};
+app.use(session(sessionConfig));
+app.use(flash());
+app.use((req,res,next)=>{
+  res.locals.success = req.flash("success");
+  res.locals.error = req.flash("error");
+  next();
+})
+
+
 // app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true }));
 app.use("/campgrounds",campgroundRoutes );
@@ -30,6 +50,7 @@ main()
   .then(() => console.log("Connected"))
   .catch((err) => console.log(err));
 
+ 
 
 app.get(
   "/",
@@ -42,47 +63,6 @@ app.get(
     
   })
 );
-app.get("/greet", (req, res) => {
-
-  res.send(`Hello ${req.cookies.name} Nice pet u got there is it a ${req.cookies.animal} ?`);
-});
-app.get("/getsignedcookie", (req, res) => {
-  res.cookie("fruit", "grape", { signed: true });
-  res.send("OK SIGNED YOUR COOKIE");
-})
-app.get("/verifyfruit", (req, res) => {
-  console.log(req.cookies);
-  console.log(req.signedCookies);
-  res.send(req.signedCookies.fruit);
-});
-app.get("/setname", (req, res) => {
-  res.cookie("name", "Stevie Wonder");
-  res.cookie("animal", "harlequin shrimp");
-  res.send("OK SENT YOU A COOKIE");
-});
-
-// app.use((req, res, next) => {
-//   req.requestTime = Date.now();
-// console.log(req.method, req.path,req.httpVersion,req.stale);
-// next();
-// });
-
-
-// app.get("/", (req, res) => {
-//   console.log("RequestDate" + req.requestTime);
-//   res.render("home");
-// });
-
-// app.get("/makecampground",async (req,res)=>{
-//     const camp = new Campground({tittle:"My Backyard",description:"cheap camping!"});
-//     await camp.save()
-//     .then(data=>{
-//         console.log(data);
-//     })
-//     .catch(err => console.log(err));
-//     res.send(camp)
-// })
-
 
 
 

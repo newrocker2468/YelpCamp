@@ -1,13 +1,13 @@
 const express = require('express');
-const router = express.Router();
-const mongoose = require("mongoose");
+const router = express.Router(mergeparams=true);
 const catchAsync = require("../utils/catchasync");
 const {validateCampground, validateReview } = require("../validators/validator");
 const {getQuote} = require('../middlewares/RandomQuoteAPI');
 const Campground = require('../models/campground');
 const Review = require('../models/review');
-const ejsmate = require("ejs-mate");
-const ExpressError = require("../utils/ExpressError");
+
+
+
 
 
   router.get(
@@ -31,7 +31,7 @@ const ExpressError = require("../utils/ExpressError");
     catchAsync(async (req, res) => {
       const resultcampground = await Campground.findById(req.params.id).populate("reviews");
       console.log(resultcampground);
-      res.render("campgrounds/show", { resultcampground });
+      res.render("campgrounds/show", { resultcampground});
     })
   );
   
@@ -43,6 +43,7 @@ const ExpressError = require("../utils/ExpressError");
   
       const campground = new Campground(req.body);
       await campground.save();
+      req.flash("success", "Successfully made a new Campground!");
       res.redirect(`/campgrounds/${campground._id}`);
     })
   );
