@@ -54,7 +54,7 @@ const Review = require('../models/review');
     "/:id/edit",
     catchAsync(async (req, res) => {
       const campground = await Campground.findById(req.params.id);
-      if (!resultcampground) {
+      if (!campground) {
         req.flash("error", "Campground Not Found!"); 
         return res.redirect("/campgrounds");}
       res.render("campgrounds/edit", { campground });
