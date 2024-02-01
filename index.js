@@ -8,11 +8,16 @@ const ExpressError = require("./utils/ExpressError");
 const campgroundRoutes = require("./routes/campground");
 const catchAsync = require("./utils/catchasync");
 const cookieParser = require("cookie-parser");
+const session = require("express-session");
 
 app.engine("ejs", ejsmate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/views"));
 
+app.use(session({secret:"thisisnotagoodsecret"}));
+app.get("/pageviews", (req, res) => {
+  res.send(`You viewed this page x times`);
+});
 // app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true }));
 app.use("/campgrounds",campgroundRoutes );
