@@ -22,4 +22,4 @@ const validateCampground = (req, res, next) => {
       next();
     }
   };
-  module.exports = { validateCampground, validateReview };
+  module.exports = {validateCampground, validateReview };

@@ -35,6 +35,7 @@ fetch(endPoint)
       for (let i = 0; i < 30; i++) {
         const random1000 = Math.floor(Math.random() * 1000);
         const camp = new Campground({
+          Author:"65be55af0679000a04147966",
           tittle: `${sample(descriptors)} ${sample(places)}`,
           location: `${cities[random1000].city},${cities[random1000].state}`,
           image: arrimages[i],
