@@ -10,12 +10,11 @@ const { isAuthor } = require("../middlewares/isAuthor");
 const { isReviewAuthor } = require("../middlewares/isReviewAuthor");
 const campground = require("../controllers/campground");
 const review = require("../controllers/review");
+const Campground = require("../models/campground");
 
 router.get("/", catchAsync(campground.index));
 
 router.get("/new", isloggedin, campground.RenderNewForm);
-
-router.get("/:id", catchAsync(campground.ShowAllCampgrounds));
 
 router.post(
   "/",
@@ -23,6 +22,8 @@ router.post(
   validateCampground,
   catchAsync(campground.CreateNewCampground)
 );
+router.get("/:id", catchAsync(campground.ShowAllCampgrounds));
+
 
 router.post(
   "/:id/delete",
@@ -31,20 +32,11 @@ router.post(
   catchAsync(campground.DeleteCampground)
 );
 
-router.get(
-  "/:id/edit",
-  isloggedin,
-  isAuthor,
-  catchAsync(campground.RenderEditForm)
-);
 
-router.post(
-  "/:id/edit",
-  isloggedin,
-  isAuthor,
-  validateCampground,
-  catchAsync(campground.UpdateCampground)
-);
+router.route("/:id/edit")
+.get(isloggedin, isAuthor, catchAsync(campground.RenderEditForm))
+.post(isloggedin,isAuthor,validateCampground,catchAsync(campground.UpdateCampground));
+
 
 router.post(
   "/:id/reviews",
@@ -57,6 +49,7 @@ router.get("/:id/reviews/:reviewId/delete",isloggedin,isReviewAuthor, async (req
   const c = await Campground.findById({id});
   res.redirect(`/campgrounds/${c.id}`)
 })
+
 router.post(
   "/:id/reviews/:reviewId/delete",
   isloggedin,
