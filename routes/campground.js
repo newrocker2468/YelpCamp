@@ -14,7 +14,7 @@ const Campground = require("../models/campground");
 const multer = require("multer");
 const { storage } = require("../cloudinary");
 const upload = multer({storage});
-
+const {cloudinary} = require("../cloudinary");
 
 router.get("/", catchAsync(campground.index));
 
@@ -62,6 +62,7 @@ router.post(
   isReviewAuthor,
   catchAsync(review.DeleteReview)
 );
+
 
 // router.get("/:id/reviews/:reviewId/delete",isloggedin,isReviewAuthor, async (req, res) => {
 //   const {id,reviewId} = req.params;

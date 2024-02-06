@@ -14,49 +14,83 @@ const sample = (array) => array[Math.floor(Math.random() * array.length)];
 let arrimages = [];
 let rnumber = Math.floor(Math.random() * 10) + 1;
 
-let clientID = "c9JeKRCEjblvDAPYSszzqGC4iRrPYpgZ7Ov7VwYK0bE";
-let endPoint = `https://api.unsplash.com/collections/9046579/photos?client_id=${clientID}&per_page=35&page=${rnumber}`;
-fetch(endPoint)
-  .then(async function (response) {
-    return await response.json();
-  })
-  .then((jsondata) => {
-    console.log(arrimages.length, jsondata.length);
+// let clientID = "c9JeKRCEjblvDAPYSszzqGC4iRrPYpgZ7Ov7VwYK0bE";
+// let endPoint = `https://api.unsplash.com/collections/9046579/photos?client_id=${clientID}&per_page=35&page=${rnumber}`;
+// fetch(endPoint)
+//   .then(async function (response) {
+//     return await response.json();
+//   })
+//   .then((jsondata) => {
+//     console.log(arrimages.length, jsondata.length);
 
-    jsondata.forEach(function (obj) {
-      // console.log(obj.urls.regular)
-      arrimages.push(obj.urls.regular);
+//     jsondata.forEach(function (obj) {
+//       // console.log(obj.urls.regular)
+//       arrimages.push(obj.urls.regular);
+//     });
+//     return arrimages; // Move this line outside the forEach loop
+//   })
+//   .then((arrimages) => {
+//     let seedDb = async function (arrimages) {
+//       await Campground.deleteMany({});
+//       for (let i = 0; i < 30; i++) {
+//         const random1000 = Math.floor(Math.random() * 1000);
+//         const camp = new Campground({
+//           Author:"65be55af0679000a04147966",
+//           tittle: `${sample(descriptors)} ${sample(places)}`,
+//           location: `${cities[random1000].city},${cities[random1000].state}`,
+//           images: [{
+//             url: arrimages[i],
+//             filename: "YelpCamp"
+//           },
+//           {
+//             url: arrimages[i+3],
+//             filename: "YelpCamp"
+//           }
+//         ],
+//           description:
+//             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloremque, volupta  tem. Quisquam, voluptatem. Quisquam, voluptatem.",
+//           price: Math.floor(Math.random() * 20) + 10,
+//         });
+//         await camp.save();
+//       }
+//     };
+//     seedDb(arrimages).then(() => {
+//       mongoose.connection.close();
+//     });
+//   })
+const seedDB = async () => {
+  await Campground.deleteMany({});
+  for (let i = 0; i < 200; i++) {
+    const random1000 = Math.floor(Math.random() * 1000);
+    const price = Math.floor(Math.random() * 20) + 10;
+    const camp = new Campground({
+      Author: "65c11e21a0de6d70b817d749",
+      location: `${cities[random1000].city}, ${cities[random1000].state}`,
+      tittle: `${sample(descriptors)} ${sample(places)}`,
+      description:
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam dolores vero perferendis laudantium, consequuntur voluptatibus nulla architecto, sit soluta esse iure sed labore ipsam a cum nihil atque molestiae deserunt!",
+      price,
+      geometry: { type: "Point", coordinates: [
+        cities[random1000].longitude,
+        cities[random1000].latitude,
+      ] },
+      images: [
+        {
+          url: "https://res.cloudinary.com/dk3oikndv/image/upload/v1707154485/YelpCamp/fayojjmm82exfj1cmzfa.png",
+          filename: "YelpCamp/fayojjmm82exfj1cmzfa",
+        },
+        {
+          url: "https://res.cloudinary.com/dk3oikndv/image/upload/v1707154486/YelpCamp/pbicqrn43thknjdbf4pw.png",
+          filename: "YelpCamp/pbicqrn43thknjdbf4pw",
+        },
+      ],
     });
-    return arrimages; // Move this line outside the forEach loop
-  })
-  .then((arrimages) => {
-    let seedDb = async function (arrimages) {
-      await Campground.deleteMany({});
-      for (let i = 0; i < 30; i++) {
-        const random1000 = Math.floor(Math.random() * 1000);
-        const camp = new Campground({
-          Author:"65be55af0679000a04147966",
-          tittle: `${sample(descriptors)} ${sample(places)}`,
-          location: `${cities[random1000].city},${cities[random1000].state}`,
-          images: [{
-            url: arrimages[i],
-            filename: "YelpCamp"
-          },
-          {
-            url: arrimages[i+3],
-            filename: "YelpCamp"
-          }
-        ],
-          description:
-            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloremque, volupta  tem. Quisquam, voluptatem. Quisquam, voluptatem.",
-          price: Math.floor(Math.random() * 20) + 10,
-        });
-        await camp.save();
-      }
-    };
-    seedDb(arrimages).then(() => {
-      mongoose.connection.close();
-    });
+    await camp.save();
+  }
+};
+seedDB()
+  .then(() => {
+    mongoose.connection.close();
   })
   .catch((err) => {
     console.log("Error:", err);

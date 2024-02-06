@@ -1,6 +1,9 @@
 <% layout('layouts/boilerplate') %>
 <link rel="stylesheet" href="/stylesheets/stars.css">
-
+<script> 
+    const mapToken = '<%-process.env.MAPBOX_TOKEN%>';
+    const campground = <%-JSON.stringify(campground)%>;
+</script>
 
 
     <div class="row">
@@ -38,7 +41,12 @@
                     <li class="list-group-item text-muted">
                         <%= campground.location%>
                     </li>
-                    <li class="list-group-item">Submitted By <%= campground.Author.username%>
+                    <li class="list-group-item">Submitted By 
+                        <% if(campground.Author){ %>
+                            <%=campground.Author.username%>
+                        <% } else{ %>
+                            Anonymous
+                        <% } %>
                     </li>
                     <li class="list-group-item">Price $ : <%=campground.price%> / Night</li>
                 </ul>
@@ -57,7 +65,8 @@
             </div>
         </div>
         <div class="col-6">
-
+            <%=campground.geometry%>
+            <div id='map' style='width: 40dvw; height: 50dvh;'></div>
               
              
             <%if(currentUser) {%>
@@ -92,6 +101,7 @@
                         Looks good!
                     </div>
                 </div>
+                <div style="width: 640px; height: 480px" id="map"></div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
             <%}%>
@@ -127,9 +137,14 @@
                         <%}%> 
                         </div>
                     </div>
+                    
                     <%}%>
         </div>
     </div>
     <footer>
         <a href="/campgrounds">Back to home page</a>
     </footer>
+
+<script src="/javascripts/showPageMap.js"></script>
+
+

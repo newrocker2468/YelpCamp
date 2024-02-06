@@ -87,17 +87,19 @@ app.use("", userRoutes);
 
 
 
-
+// var platform = new H.service.Platform({
+//   'apikey': '{YOUR_API_KEY}'
+// });
 
 
 app.get(
   "/",
   catchAsync(async (req, res) => {
-    const campgrounds = await Campground.find({});
-    const r = await getQuote();
-    console.log(r);
+    // const campgrounds = await Campground.find({});
+    // const r = await getQuote();
+    // console.log(r);
 
-    res.render("campgrounds/index", { campgrounds, r });
+    res.render("home");
   })
 );
 
