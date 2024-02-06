@@ -11,17 +11,23 @@ const { isReviewAuthor } = require("../middlewares/isReviewAuthor");
 const campground = require("../controllers/campground");
 const review = require("../controllers/review");
 const Campground = require("../models/campground");
+const multer = require("multer");
+const { storage } = require("../cloudinary");
+const upload = multer({storage});
+
 
 router.get("/", catchAsync(campground.index));
 
 router.get("/new", isloggedin, campground.RenderNewForm);
-
 router.post(
   "/",
-  isloggedin,
+  isloggedin,upload.array("image"),
   validateCampground,
   catchAsync(campground.CreateNewCampground)
 );
+
+
+
 router.get("/:id", catchAsync(campground.ShowAllCampgrounds));
 
 
@@ -35,7 +41,7 @@ router.post(
 
 router.route("/:id/edit")
 .get(isloggedin, isAuthor, catchAsync(campground.RenderEditForm))
-.post(isloggedin,isAuthor,validateCampground,catchAsync(campground.UpdateCampground));
+.post(isloggedin,isAuthor,upload.array("image"),validateCampground,catchAsync(campground.UpdateCampground));
 
 
 router.post(

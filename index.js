@@ -1,3 +1,6 @@
+if(process.env.NODE_ENV !== "production"){
+  require("dotenv").config();
+}
 const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
@@ -12,11 +15,14 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const flash = require("connect-flash");
 const { getQuote } = require("./middlewares/RandomQuoteAPI");
-const bcrypt = require("bcrypt");
 const passport = require("passport"); 
 const LocalStrategy = require("passport-local");
 const User = require("./models/user");
 const userRoutes = require("./routes/users");
+const {Cloudinary} = require("@cloudinary/url-gen");
+const {storage} = require("./cloudinary");
+const multer = require("multer");
+const upload = multer({storage});
 
 
 
@@ -58,7 +64,6 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 app.use(flash());
-
 
 // app.use(morgan("dev"));
 

@@ -15,7 +15,7 @@ let arrimages = [];
 let rnumber = Math.floor(Math.random() * 10) + 1;
 
 let clientID = "c9JeKRCEjblvDAPYSszzqGC4iRrPYpgZ7Ov7VwYK0bE";
-let endPoint = `https://api.unsplash.com/collections/9046579/photos?client_id=${clientID}&per_page=30&page=${rnumber}`;
+let endPoint = `https://api.unsplash.com/collections/9046579/photos?client_id=${clientID}&per_page=35&page=${rnumber}`;
 fetch(endPoint)
   .then(async function (response) {
     return await response.json();
@@ -38,7 +38,15 @@ fetch(endPoint)
           Author:"65be55af0679000a04147966",
           tittle: `${sample(descriptors)} ${sample(places)}`,
           location: `${cities[random1000].city},${cities[random1000].state}`,
-          image: arrimages[i],
+          images: [{
+            url: arrimages[i],
+            filename: "YelpCamp"
+          },
+          {
+            url: arrimages[i+3],
+            filename: "YelpCamp"
+          }
+        ],
           description:
             "Lorem ipsum dolor sit amet consectetur adipisicing elit. Doloremque, volupta  tem. Quisquam, voluptatem. Quisquam, voluptatem.",
           price: Math.floor(Math.random() * 20) + 10,
