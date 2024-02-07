@@ -25,7 +25,6 @@ module.exports.ShowAllCampgrounds = async (req, res) => {
       },
     })
     .populate("Author");
-    console.log(campground);
   if (!campground) {
     req.flash("error", "Campground Not Found!");
     return res.redirect("/campgrounds");
@@ -45,7 +44,6 @@ module.exports.CreateNewCampground = async (req, res, next) => {
   campground.images = req.files.map(f=>({url:f.path,filename:f.filename}));
   campground.Author = req.user._id;
   await campground.save();
-  // console.log(campground);
   req.flash("success", "Successfully made a new Campground!");
   res.redirect(`/campgrounds/${campground._id}`);
 };
@@ -100,7 +98,6 @@ module.exports.UpdateCampground = async (req, res, next) => {
       for(let filename of req.body.deleteImages){
         await cloudinary.uploader.destroy(filename);
       }
-    console.log(campground);
     }
     req.flash("success", "Successfully Updated Campground!");
     res.redirect(`/campgrounds/${campground._id}`);

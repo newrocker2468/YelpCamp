@@ -177,7 +177,6 @@ passport.deserializeUser(User.deserializeUser());
 app.use(flash());
 
 app.use((req, res, next) => {
-  console.log(req.query);
   res.locals.originalurl=req.originalUrl;
   res.locals.currentUser = req.user;
   res.locals.success = req.flash("success");

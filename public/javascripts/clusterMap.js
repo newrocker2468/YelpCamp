@@ -97,7 +97,6 @@ map.on('load', function () {
   // the location of the feature, with
   // description HTML from its properties.
   map.on("click", "unclustered-point", (e) => {
-    console.log("heelo" + e.features[0].properties.popUpMarkup);
   const text = e.features[0].properties.popUpMarkup;
     const coordinates = e.features[0].geometry.coordinates.slice();
 
