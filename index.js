@@ -6,36 +6,81 @@ const express = require("express");
 const mongoose = require("mongoose");
 const path = require("path");
 const app = express();
-const morgan = require("morgan");
 const ejsmate = require("ejs-mate");
 const ExpressError = require("./utils/ExpressError");
 const campgroundRoutes = require("./routes/campground");
-const Campground = require("./models/campground");
 const catchAsync = require("./utils/catchasync");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const flash = require("connect-flash");
-const { getQuote } = require("./middlewares/RandomQuoteAPI");
 const passport = require("passport"); 
 const LocalStrategy = require("passport-local");
 const User = require("./models/user");
 const userRoutes = require("./routes/users");
-const {Cloudinary} = require("@cloudinary/url-gen");
-const {storage} = require("./cloudinary");
-const multer = require("multer");
-const upload = multer({storage});
 const mongosanitize = require("express-mongo-sanitize");
 const { default: helmet } = require("helmet");
+const MongoStore = require("connect-mongo");
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const dbUrl = process.env.DB_URL;
+const secret = process.env.SECRET;
 
+// const dbUrl ="mongodb://127.0.0.1:27017/campground";
 
+const store = MongoStore.create({
+  mongoUrl: dbUrl,
+  touchAfter: 24 * 60 * 60,
+  crypto: {
+      secret: `${secret}`
+  }
+});
 
+store.on("error", function(e){
+  console.log("Session Store Error", e);
+}
+);
+const client = new MongoClient(dbUrl, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
 async function main() {
-  await mongoose.connect("mongodb://127.0.0.1:27017/campground");
+  await mongoose.connect(dbUrl);
 }
 main()
   .then(() => console.log("Connected"))
   .catch((err) => console.log(err));
+async function run() {
+  try {
+    // Connect the client to the server	(optional starting in v4.7)
+    await client.connect();
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  } finally {
+    // Ensures that the client will close when you finish/error
+    await client.close();
+  }
+}
+run().catch(console.dir);
 
+
+
+
+
+
+// async function run() {
+//   try {
+
+//     await client.connect();
+//     await client.db("admin").command({ ping: 1 });
+//     console.log("Pinged your deployment. You successfully connected to MongoDB!");
+//   } finally {
+//     await client.close();
+//   }
+// }
+// run().catch(console.dir);
 
 
 
@@ -48,7 +93,6 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "/views"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(mongosanitize());
-app.use(helmet());
 const scriptSrcUrls = [
   "https://stackpath.bootstrapcdn.com/",
   "https://api.tiles.mapbox.com/",
@@ -74,15 +118,17 @@ const connectSrcUrls = [
   "https://events.mapbox.com/",
 ];
 const fontSrcUrls = [];
+
 app.use(
   helmet.contentSecurityPolicy({
       directives: {
           defaultSrc: [],
           connectSrc: ["'self'", ...connectSrcUrls],
-          scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+          scriptSrc: ["'self'","'unsafe-inline'", ...scriptSrcUrls],
           styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
           workerSrc: ["'self'", "blob:"],
           objectSrc: [],
+          scriptSrcAttr: ["'self'", "'unsafe-inline'"],
           imgSrc: [
               "'self'",
               "blob:",
@@ -90,9 +136,11 @@ app.use(
               "https://res.cloudinary.com/dk3oikndv/", //SHOULD MATCH YOUR CLOUDINARY ACCOUNT! 
               "https://images.unsplash.com/",
               "https://source.unsplash.com/",
+              "https://imgs.search.brave.com/",
           ],
           fontSrc: ["'self'", ...fontSrcUrls],
-      },
+      }
+      ,
   })
 );
 
@@ -106,8 +154,9 @@ app.use(
 
 
 const sessionConfig = {
+  store,
   name: "Session",
-  secret: "thisshouldbeabettersecret!",
+  secret:`${secret}` ,
   resave: false,
   saveUninitialized: true,
   cookie: {
@@ -181,6 +230,10 @@ app.all("*", (req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
+  if(err.message === "Page not found"){
+    return res.redirect("/campgrounds");
+  }
+
   const { statusCode = 500 } = err;
   if (!err.statusCode) err.statusCode = 500;
   if (!err.message) err.message = "Oh No, Something went wrong";

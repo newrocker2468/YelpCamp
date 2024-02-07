@@ -12,14 +12,19 @@
                 <div class="card mb-3">
                     <div class="row">
                         <div class="col-md-4">
-                        
-<% if(campground.images.length > 0){ %>
-    <img crossorigin="anonymous" src="<%=campground.images[1].url%>" class="img-fluid" alt="Responsive image">
-<% } else{ %>
-    <img crossorigin="anonymous" src="https://imgs.search.brave.com/NmIhDCnRfV7tkvlHoLvpYOEzfhJpA0oCKBWF6v_m0js/rs:fit:500:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzAyLzY4LzU1LzYw/LzM2MF9GXzI2ODU1/NjAxMl9jMVdCYUtG/TjVyalJ4UjJleVYz/M3puSzRxblllS1pq/bS5qcGc" crossorigin="anonymous" class="img-fluid" alt="Responsive image">
-<% } %>
-                          
-                        </div>
+                            <% var display = false %>
+<%campground.images.forEach((img,index)=>{%>
+    <%if(img.url){%>
+        <% display = true %>
+        <% }%>
+    <%})%>
+           
+    <%if(display) {%>
+        <img crossorigin="anonymous" src="<%=campground.images[0].url%>" class="img-fluid" alt="Responsive image">
+        <% } else{ %>
+            <img crossorigin="anonymous" src="https://imgs.search.brave.com/NmIhDCnRfV7tkvlHoLvpYOEzfhJpA0oCKBWF6v_m0js/rs:fit:500:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzAyLzY4LzU1LzYw/LzM2MF9GXzI2ODU1/NjAxMl9jMVdCYUtG/TjVyalJ4UjJleVYz/M3puSzRxblllS1pq/bS5qcGc" crossorigin="anonymous" class="img-fluid" alt="Responsive image">
+            <% } %>           
+        </div>
                         <div class="col-md-8">
                             <div class="card-body">
                                 <div class="card-title">

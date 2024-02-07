@@ -10,10 +10,10 @@ function previewMultiple(event) {
 
       var filenameShort = filename.substring(0, 12);
     
-        document.getElementById("formFile").innerHTML += '<div style="margin:6px;"><img src="' + urls + '"><p>' + filenameShort + '...</p></div>';
+        document.getElementById("formFile").innerHTML += '<div style="margin:6px;"><img crossorigin="anonymous" src="' + urls + '"><p>' + filenameShort + '...</p></div>';
       }
       else{
-        document.getElementById("formFile").innerHTML += '<div style="margin:6px;"><img src="' + urls + '"><p>' + filename + '</p></div>';
+        document.getElementById("formFile").innerHTML += '<div style="margin:6px;"><img crossorigin="anonymous" src="' + urls + '"><p>' + filename + '</p></div>';
       }
       
     }

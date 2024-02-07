@@ -3,7 +3,7 @@ const map = new mapboxgl.Map({
   container: "map",
   // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
   style: "mapbox://styles/jaskaran9167/clsa7m22i001t01pfhw6k8au5",
-  center: [-103.5917, 40.6699],
+  center:[78.9629, 20.5937],
   zoom: 3,
 });
 
@@ -68,7 +68,7 @@ map.on('load', function () {
     filter: ["!", ["has", "point_count"]],
     paint: {
       "circle-color": "#11b4da",
-      "circle-radius": 4,
+      "circle-radius": 6,
       "circle-stroke-width": 1,
       "circle-stroke-color": "#fff",
     },
@@ -97,7 +97,8 @@ map.on('load', function () {
   // the location of the feature, with
   // description HTML from its properties.
   map.on("click", "unclustered-point", (e) => {
-  const {text} = e.features[0].properties.popUpMarkup;
+    console.log("heelo" + e.features[0].properties.popUpMarkup);
+  const text = e.features[0].properties.popUpMarkup;
     const coordinates = e.features[0].geometry.coordinates.slice();
 
 
