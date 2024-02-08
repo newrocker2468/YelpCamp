@@ -1,3 +1,4 @@
+//NOTE - Turned on secure:true (https) so turn that off before any development or testing  
 // if(process.env.NODE_ENV !== "production"){
 //   require("dotenv").config();
 // }
@@ -30,7 +31,7 @@ const store = MongoStore.create({
   mongoUrl: dbUrl,
   touchAfter: 24 * 60 * 60,
   crypto: {
-      secret: `${secret}`
+    secret: process.env.SECRET
   }
 });
 
@@ -156,7 +157,7 @@ app.use(
 const sessionConfig = {
   store,
   name: "Session",
-  secret:`${secret}` ,
+  secret:process.env.SECRET ,
   resave: false,
   saveUninitialized: true,
   cookie: {
