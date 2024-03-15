@@ -22,29 +22,29 @@ const mongosanitize = require("express-mongo-sanitize");
 const { default: helmet } = require("helmet");
 const MongoStore = require("connect-mongo");
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const dbUrl = process.env.DB_URL;
+
 
 
 // const dbUrl ="mongodb://127.0.0.1:27017/campground";
 
 const store = MongoStore.create({
-  mongoUrl: dbUrl,
+  mongoUrl: process.env.DB_URL,
   touchAfter: 24 * 60 * 60,
   crypto: {
-    secret: process.env.SECRET
-  }
+    secret: process.env.SECRET,
+  },
 });
 
 store.on("error", function(e){
   console.log("Session Store Error", e);
 }
 );
-const client = new MongoClient(dbUrl, {
+const client = new MongoClient(process.env.DB_URL, {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true,
-  }
+  },
 });
 async function main() {
   await mongoose.connect(dbUrl);
@@ -162,13 +162,13 @@ const sessionConfig = {
   saveUninitialized: true,
   cookie: {
     httpOnly: true,
-    secure:true,
+    // secure:true,
     expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
     maxAge: 1000 * 60 * 60 * 24 * 7,
    },
 };
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser("Thisismysecret"));
+app.use(cookieParser(process.env.SECRET));
 app.use(session(sessionConfig));
 app.use(passport.initialize());
 app.use(passport.session());
