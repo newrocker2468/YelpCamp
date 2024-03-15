@@ -47,7 +47,7 @@ const client = new MongoClient(process.env.DB_URL, {
   },
 });
 async function main() {
-  await mongoose.connect(dbUrl);
+  await mongoose.connect(process.env.DB_URL);
 }
 main()
   .then(() => console.log("Connected"))
