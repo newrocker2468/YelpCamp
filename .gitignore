@@ -1,2 +1,4 @@
 node_modules/
 .env
+checker.js
+newchecker.js

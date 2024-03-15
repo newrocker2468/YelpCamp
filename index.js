@@ -23,7 +23,7 @@ const { default: helmet } = require("helmet");
 const MongoStore = require("connect-mongo");
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const dbUrl = process.env.DB_URL;
-const secret = process.env.SECRET;
+
 
 // const dbUrl ="mongodb://127.0.0.1:27017/campground";
 
@@ -162,7 +162,7 @@ const sessionConfig = {
   saveUninitialized: true,
   cookie: {
     httpOnly: true,
-    secure:true,
+    // secure:true,
     expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
     maxAge: 1000 * 60 * 60 * 24 * 7,
    },
