@@ -54,7 +54,6 @@
                 <div class="card-body">
                     <%  if( currentUser.email === "newrocker2468@gmail.com" || (currentUser && campground.Author.equals(currentUser._id)) )  {%>      
                     <a class="card-link btn btn-info" href="/campgrounds/<%= campground.id%>/edit">Edit</a>
-                    <span><%= currentUser%></span>
                         <form class="d-inline" action="/campgrounds/<%= campground.id%>/delete" method="post">
                             <button type="submit" class="btn btn-danger">Delete</button>
                         </form>
@@ -128,7 +127,7 @@
                             <p class="card-text">
                                 Description:
                                 <%=review.body%>
-                                             </p> <%  if( currentUser && review.Author.equals(currentUser._id))  {%>               
+                                             </p> <%  if( currentUser.email === "newrocker2468@gmail.com" || (currentUser && campground.Author.equals(currentUser._id)) )  {%>               
                             <form action="/campgrounds/<%=campground.id%>/reviews/<%=review.id%>/delete"
                                 method="POST">
                                 <button class="btn btn-danger" type="submit">Delete</button>
