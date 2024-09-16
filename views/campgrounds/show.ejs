@@ -52,8 +52,9 @@
                 </ul>
                 
                 <div class="card-body">
-                    <%  if( (currentUser && campground.Author.equals(currentUser._id)) || currentUser =="newrocker2468@gmail.com")  {%>      
+                    <%  if( currentUser === "newrocker2468@gmail.com" || (currentUser && campground.Author.equals(currentUser._id)) )  {%>      
                     <a class="card-link btn btn-info" href="/campgrounds/<%= campground.id%>/edit">Edit</a>
+                    <span><%= currentUser%></span>
                         <form class="d-inline" action="/campgrounds/<%= campground.id%>/delete" method="post">
                             <button type="submit" class="btn btn-danger">Delete</button>
                         </form>
