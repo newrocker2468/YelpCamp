@@ -22,7 +22,7 @@ const mongosanitize = require("express-mongo-sanitize");
 const { default: helmet } = require("helmet");
 const MongoStore = require("connect-mongo");
 const { MongoClient, ServerApiVersion } = require('mongodb');
-
+const bodyParser = require('body-parser');
 
 
 // const dbUrl ="mongodb://127.0.0.1:27017/campground";

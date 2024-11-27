@@ -1,29 +1,38 @@
+require("dotenv").config();
+const createuser = require("./createUsers");
 const mongoose = require("mongoose");
 const cities = require("./cities");
 const Campground = require("../models/campground");
 const { descriptors, places } = require("./seedHelpers");
 const { json } = require("body-parser");
 const MongoStore = require("connect-mongo");
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion } = require("mongodb");
 const dbUrl = process.env.DB_URL; //wont work not same as in .env
+const secret = process.env.SECRET;
+if (!process.env.DB_URL || !process.env.SECRET) {
+  console.log(process.env.SECRET, process.env.DB_URL);
+  throw new Error(
+    "Environment variables MONGO_URL and SECRET must be defined."
+  );
+}
 const store = MongoStore.create({
-  mongoUrl: dbUrl,
+  mongoUrl:
+    dbUrl,
   touchAfter: 24 * 60 * 60,
   crypto: {
-    secret: process.env.SECRET
-  }
+    secret: process.env.SECRET,
+  },
 });
 
-store.on("error", function(e){
+store.on("error", function (e) {
   console.log("Session Store Error", e);
-}
-);
+});
 const client = new MongoClient(dbUrl, {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true,
-  }
+  },
 });
 async function main() {
   await mongoose.connect(dbUrl);
@@ -37,7 +46,9 @@ async function run() {
     await client.connect();
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
   } finally {
     // Ensures that the client will close when you finish/error
     await client.close();
@@ -49,7 +60,6 @@ let arrimages = [];
 let rnumber = Math.floor(Math.random() * 10) + 1;
 
 let clientID = "c9JeKRCEjblvDAPYSszzqGC4iRrPYpgZ7Ov7VwYK0bE";
-
 let endPoint = `https://api.unsplash.com/collections/9046579/photos?client_id=${clientID}&per_page=35&page=${rnumber}`;
 fetch(endPoint)
   .then(async function (response) {
@@ -62,40 +72,40 @@ fetch(endPoint)
       // console.log(obj.urls.regular)
       arrimages.push(obj.urls.regular);
     });
-    return arrimages; 
+    return arrimages;
   })
-  .then((arrimages) => {
+  .then(async (arrimages) => {
     let seedDb = async function (arrimages) {
-
-
-        for (let i = 0; i < 30; i++) {
-          const random1000 = Math.floor(Math.random() * 1000);
-          const camp = new Campground({
-            Author: "65c11e21a0de6d70b817d749",
-                  location: `${cities[random1000].city}, ${cities[random1000].state}`,
-                  tittle: `${sample(descriptors)} ${sample(places)}`,
-                  description:
-                    "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam dolores vero perferendis laudantium, consequuntur voluptatibus nulla architecto, sit soluta esse iure sed labore ipsam a cum nihil atque molestiae deserunt!",
-                  price:random1000,
-                  geometry: { type: "Point", coordinates: [
-                    cities[random1000].longitude,
-                    cities[random1000].latitude,
-                  ] },
-                  images: [
-                    {
-                      url: arrimages[i],
-                      filename: "YelpCamp/fayojjmm82exfj1cmzfa",
-                    },
-                  ],
-                });
-          await camp.save();
-        
-      };
+      for (let i = 0; i < 30; i++) {
+        const random1000 = Math.floor(Math.random() * 1000);
+        const camp = new Campground({
+          Author: await createuser(),
+          location: `${cities[random1000].city}, ${cities[random1000].state}`,
+          tittle: `${sample(descriptors)} ${sample(places)}`,
+          description:
+            "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam dolores vero perferendis laudantium, consequuntur voluptatibus nulla architecto, sit soluta esse iure sed labore ipsam a cum nihil atque molestiae deserunt!",
+          price: random1000,
+          geometry: {
+            type: "Point",
+            coordinates: [
+              cities[random1000].longitude,
+              cities[random1000].latitude,
+            ],
+          },
+          images: [
+            {
+              url: arrimages[i],
+              filename: "YelpCamp/fayojjmm82exfj1cmzfa",
+            },
+          ],
+        });
+        await camp.save();
+      }
     };
     seedDb(arrimages).then(() => {
       mongoose.connection.close();
     });
-  })
+  });
 // const seedDB = async () => {
 //   await Campground.deleteMany({});
 //   for (let i = 0; i < 200; i++) {
@@ -195,4 +205,4 @@ fetch(endPoint)
 //         mongoose.connection.close();
 //     })
 
-//    seedDB();
+// seedDB();

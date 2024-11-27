@@ -6,9 +6,10 @@ const {storeReturnTo} = require("../middlewares/storeReturnto");
 const users = require("../controllers/users");
 
 router.route("/register")
-.get( users.RenderRegister)
-.post(catchAsync(users.RegisterUser));
-
+.get(users.RenderRegister)
+.post(catchAsync(users.RegisterUser))
+router.route("/register/seed")
+.post(catchAsync(users.RegisterUserSeeder));
 router.route("/login")
 .get(users.RenderLogin)
 .post(storeReturnTo,passport.authenticate("local", {
