@@ -76,7 +76,7 @@ fetch(endPoint)
   })
   .then(async (arrimages) => {
     let seedDb = async function (arrimages) {
-      for (let i = 0; i < 30; i++) {
+      for (let i = 0; i <30; i++) {
         const random1000 = Math.floor(Math.random() * 1000);
         const camp = new Campground({
           Author: await createuser(),
