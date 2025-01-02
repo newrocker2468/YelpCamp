@@ -7,10 +7,28 @@ const mapBoxToken = process.env.MAPBOX_TOKEN
 const geocoder = mbxGeocoding({accessToken:mapBoxToken})
 
 module.exports.index = async (req, res) => {
-  const campgrounds = await Campground.find({});
-  const r = await getQuote();
-  res.render("campgrounds/index", { campgrounds, r });
+  try {
+    const campgrounds = await Campground.find({});
+
+    // Array of quotes
+    const quotes = [
+      "The best way to get started is to quit talking and begin doing. – Walt Disney",
+      "The pessimist sees difficulty in every opportunity. The optimist sees opportunity in every difficulty. – Winston Churchill",
+      "Don’t let yesterday take up too much of today. – Will Rogers",
+      "You learn more from failure than from success. Don’t let it stop you. Failure builds character. – Unknown",
+      "It’s not whether you get knocked down, it’s whether you get up. – Vince Lombardi",
+    ];
+
+    // Select a random quote
+    const r = quotes[Math.floor(Math.random() * quotes.length)];
+
+    res.render("campgrounds/index", { campgrounds, r });
+  } catch (err) {
+    console.error("Error fetching campgrounds:", err);
+    res.status(500).send("Internal Server Error");
+  }
 };
+
 
 module.exports.RenderNewForm = (req, res) => {
   res.render("campgrounds/new");

@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router((mergeparams = true));
+const router = express.Router({ mergeParams: true });
 const { isloggedin } = require("../middlewares/loginverifier");
 const catchAsync = require("../utils/catchasync");
 const {
