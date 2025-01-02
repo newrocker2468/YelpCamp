@@ -1,13 +1,6 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
-const cities = require("./cities");
-const Campground = require("../models/campground");
-const { descriptors, places } = require("./seedHelpers");
-const { json } = require("body-parser");
-const MongoStore = require("connect-mongo");
-const { MongoClient, ServerApiVersion } = require("mongodb");
 const dbUrl = process.env.DB_URL; // Ensure this matches your .env file
-const secret = process.env.SECRET;
 const firstNames = [
   "Alice",
   "Bob",
@@ -102,14 +95,12 @@ const createuser = async () => {
   })
     .then(async (res) => {
       if (res.ok) {
-        const result = await res.json(); // Parse JSON data from response
+        const result = await res.json(); 
         console.log("Registration result:", result);
         id = result.userId;
       } else {
         const error = await res.json();
-        // if ((error.error = "A user with the given username is already registered")) {
-        //   createuser();
-        // }
+     
         console.error("Registration error:", error.error);
       }
     })
